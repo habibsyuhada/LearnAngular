@@ -10,38 +10,8 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit {
-  ngOnInit(){
-    this.getProducts();
-  }
-  products: Product[] = [];
-  constructor(
-    public api: ApiService,
-    public loadingController: LoadingController,
-    public router: Router,
-    public route: ActivatedRoute
-  ) {
-    
-  }
+export class HomePage {
 
-  async getProducts() {
-    const loading = await this.loadingController.create({
-      message: 'Loading...'
-    });
-    await loading.present();
-    await this.api.getProducts()
-    .subscribe(res => {
-      this.products = res;
-      console.log(this.products);
-      loading.dismiss();
-    }, err => {
-      console.log(err);
-      loading.dismiss();
-    });
-  }
+  constructor() {}
 
-  drop(event: CdkDragDrop<any>) {
-    moveItemInArray(this.products, event.previousIndex, event.currentIndex);
-  }
-  
 }
