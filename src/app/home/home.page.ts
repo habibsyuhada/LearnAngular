@@ -1,9 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ApiService } from '../api.service';
-import { Product } from '../product';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -12,6 +7,12 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 })
 export class HomePage {
 
+<<<<<<< HEAD
   constructor() {}
 
+=======
+  constructor() {
+    
+  }
+>>>>>>> parent of a000abd... .
 }

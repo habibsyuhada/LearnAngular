@@ -3,9 +3,6 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { ScrollingModule } from '@angular/cdk/scrolling';
-import { DragDropModule } from '@angular/cdk/drag-drop';
-
 
 import { HomePage } from './home.page';
 
@@ -13,9 +10,7 @@ import { HomePage } from './home.page';
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,  
-    ScrollingModule,
-    DragDropModule,
+    IonicModule,
     RouterModule.forChild([
       {
         path: '',
