@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { catchError, tap, map } from 'rxjs/operators';
-import { Product } from './product';
+import { catchError, retry } from 'rxjs/operators';
+import { Student } from 'models/student';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -14,54 +14,80 @@ const apiUrl = 'http://localhost:3000/api/v1/products';
   providedIn: 'root'
 })
 export class ApiService {
+  base_path = 'http://localhost:3000/students';
 
   constructor(private http: HttpClient) { }
   
-  private handleError(operation = 'operation', result?: any) {
-    return (error: any): Observable<any> => {
-      console.error(error); // log to console instead
-      return of(result as any);
-    };
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json'
+    })
   }
 
-  getProducts(): Observable<any> {
-    return this.http.get(apiUrl)
+  handleError(error: HttpErrorResponse) {
+    if (error.error instanceof ErrorEvent) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error.message);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong,
+      console.error(
+        `Backend returned code ${error.status}, ` +
+        `body was: ${error.error}`);
+    }
+    // return an observable with a user-facing error message
+    return throwError(
+      'Something bad happened; please try again later.');
+  };
+
+  // Create a new item
+  createItem(item): Observable<Student> {
+    return this.http
+      .post<Student>(this.base_path, JSON.stringify(item), this.httpOptions)
       .pipe(
-        tap(product => console.log('fetched products')),
-        catchError(this.handleError('getProducts', []))
-      );
+        retry(2),
+        catchError(this.handleError)
+      )
   }
-  
-  getProduct(id: any): Observable<any> {
-    const url = `${apiUrl}/${id}`;
-    return this.http.get(url).pipe(
-      tap(_ => console.log(`fetched product id=${id}`)),
-      catchError(this.handleError(`getProduct id=${id}`))
-    );
+ 
+  // Get single student data by ID
+  getItem(id): Observable<Student> {
+    return this.http
+      .get<Student>(this.base_path + '/' + id)
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      )
   }
-  
-  addProduct(product: Product): Observable<any> {
-    return this.http.post(apiUrl, product, httpOptions).pipe(
-      tap((prod: Product) => console.log(`added product w/ id=${prod._id}`)),
-      catchError(this.handleError('addProduct'))
-    );
+ 
+  // Get students data
+  getList(): Observable<Student> {
+    return this.http
+      .get<Student>(this.base_path)
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      )
   }
-  
-  updateProduct(id: any, product: any): Observable<any> {
-    const url = `${apiUrl}/${id}`;
-    return this.http.put(url, product, httpOptions).pipe(
-      tap(_ => console.log(`updated product id=${id}`)),
-      catchError(this.handleError('updateProduct'))
-    );
+ 
+  // Update item by id
+  updateItem(id, item): Observable<Student> {
+    return this.http
+      .put<Student>(this.base_path + '/' + id, JSON.stringify(item), this.httpOptions)
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      )
   }
-  
-  deleteProduct(id: any): Observable<any> {
-    const url = `${apiUrl}/${id}`;
-  
-    return this.http.delete(url, httpOptions).pipe(
-      tap(_ => console.log(`deleted product id=${id}`)),
-      catchError(this.handleError('deleteProduct'))
-    );
+ 
+  // Delete item by id
+  deleteItem(id) {
+    return this.http
+      .delete<Student>(this.base_path + '/' + id, this.httpOptions)
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      )
   }
   
   
